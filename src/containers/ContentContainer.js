@@ -19,9 +19,16 @@ class ContentContainer extends Component {
     }
 
     this.handleFormSuccess = this.handleFormSuccess.bind(this)
+    this.handleFormCancel = this.handleFormCancel.bind(this)
   }
 
   handleFormSuccess() {
+    this.setState({
+      mode: MODES.LIST
+    })
+  }
+
+  handleFormCancel() {
     this.setState({
       mode: MODES.LIST
     })
@@ -45,6 +52,7 @@ class ContentContainer extends Component {
         <FormContainer
           type={this.props.type}
           onSuccess={this.handleFormSuccess}
+          onCancel={this.handleFormCancel}
         />
       )
     }

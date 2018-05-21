@@ -25,6 +25,7 @@ class FormContainer extends Component {
     this.handleResourceTypeChange = this.handleResourceTypeChange.bind(this)
     this.handleResourceChange = this.handleResourceChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleCancel = this.handleCancel.bind(this)
   }
 
   componentDidMount() {
@@ -94,6 +95,10 @@ class FormContainer extends Component {
       })
   }
 
+  handleCancel() {
+    this.props.onCancel()
+  }
+
   render() {
     let errors = this.state.errors.map((error, index) => {
       return (
@@ -150,7 +155,7 @@ class FormContainer extends Component {
             onClick={this.handleSubmit}>
             Attach to {this.props.type}
           </Button>
-          <Button type="secondary">Cancel</Button>
+          <Button type="secondary" onClick={this.handleCancel}>Cancel</Button>
         </Form>
       </div>
     )
