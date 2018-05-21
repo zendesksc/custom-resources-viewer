@@ -1,0 +1,6 @@
+/* This is mainly used to override styles from ant.design components */
+
+/* Make the height of tabs auto instead of 100% */
+.ant-tabs-nav .ant-tabs-tab {
+  height: auto;
+}
