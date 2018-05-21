@@ -1,8 +1,4 @@
 import React, { Component } from 'react'
-import {
-  Row,
-  Col
-} from 'antd';
 import FormContainer from './FormContainer'
 import RelationshipList from './RelationshipList'
 
