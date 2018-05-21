@@ -3,7 +3,8 @@ import {
   Row,
   Col
 } from 'antd';
-import FormContainer from './FormContainer';
+import FormContainer from './FormContainer'
+import RelationshipList from './RelationshipList'
 
 const MODES = {
   LIST: 1,
@@ -38,11 +39,9 @@ class ContentContainer extends Component {
     if (this.state.mode === MODES.LIST) {
       return (
         <div>
-          <Row>
-            <Col span={24}>
-              Product
-            </Col>
-          </Row>
+          <RelationshipList
+            type={this.props.type}
+          />
         </div>
       )
     }
