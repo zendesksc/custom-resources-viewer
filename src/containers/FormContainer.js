@@ -68,10 +68,11 @@ class FormContainer extends Component {
   }
 
   handleSubmit() {
-    let ticketID = 0
+    let ID = 0
 
+    // TODO: Make this dynamic for ticket / user / organization
     window.client.get('ticket.id')
-      .then((res) => ticketID = res['ticket.id'])
+      .then((res) => ID = res['ticket.id'])
       .then(() => window.client.request({
         url: '/api/custom_resources/relationships',
         type: 'POST',
@@ -81,7 +82,7 @@ class FormContainer extends Component {
           data: {
             relationship_type: this.state.selectedResourceType + '_has_many_' + this.props.type + 's',
             source: this.state.selectedResourceID,
-            target: 'zen:ticket:' + ticketID
+            target: 'zen:ticket:' + ID
           }
         })
       }))
