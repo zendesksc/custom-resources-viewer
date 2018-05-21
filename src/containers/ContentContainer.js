@@ -92,8 +92,9 @@ class ContentContainer extends Component {
         })
       }))
       .then((res) => {
-        console.log(res)
-        console.log('test')
+        this.setState({
+          mode: MODES.LIST
+        })
       })
       .catch((err) => console.log(err))
 
