@@ -24,9 +24,10 @@ class AppCard extends Component {
         <TabPane tab="User" key="2">
           <ContentContainer type='user' />
         </TabPane>
-        <TabPane tab="Organization" key="3">
+        {/* Add back in organization once tickets and users are done */}
+        {/* <TabPane tab="Organization" key="3">
           <ContentContainer type='organization' />
-        </TabPane>
+        </TabPane> */}
       </Tabs>
     )
   }

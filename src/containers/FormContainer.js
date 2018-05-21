@@ -15,6 +15,7 @@ class FormContainer extends Component {
 
     this.state = {
       isReadyToSubmit: false,
+      typeRoute: '',
       resourceTypes: [],
       resources: [],
       selectedResourceType: '',
@@ -68,32 +69,71 @@ class FormContainer extends Component {
   }
 
   handleSubmit() {
-    let ID = 0
 
-    // TODO: Make this dynamic for ticket / user / organization
-    window.client.get('ticket.id')
-      .then((res) => ID = res['ticket.id'])
-      .then(() => window.client.request({
-        url: '/api/custom_resources/relationships',
-        type: 'POST',
-        dataType: 'json',
-        contentType: 'application/json',
-        data: JSON.stringify({
-          data: {
-            relationship_type: this.state.selectedResourceType + '_has_many_' + this.props.type + 's',
-            source: this.state.selectedResourceID,
-            target: 'zen:ticket:' + ID
-          }
+    if (this.props.type === 'ticket') {
+      let ID = 0
+
+      // TODO: Make this dynamic for ticket / user / organization
+      window.client.get('ticket.id')
+        .then((res) => {
+          console.log(res)
+          ID = res['ticket.id']
         })
-      }))
-      .then((res) => {
-        this.props.onSuccess()
-      })
-      .catch((err) => {
-        this.setState({
-          errors: err.responseJSON.errors
+        .then(() => window.client.request({
+          url: '/api/custom_resources/relationships',
+          type: 'POST',
+          dataType: 'json',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            data: {
+              relationship_type: this.state.selectedResourceType + '_has_many_' + this.props.type + 's',
+              source: this.state.selectedResourceID,
+              target: 'zen:ticket:' + ID
+            }
+          })
+        }))
+        .then((res) => {
+          this.props.onSuccess()
         })
-      })
+        .catch((err) => {
+          this.setState({
+            errors: err.responseJSON.errors
+          })
+        })
+    }
+
+    if (this.props.type === 'user') {
+      let ID = 0
+
+      // TODO: Make this dynamic for ticket / user / organization
+      window.client.get('ticket.requester')
+        .then((res) => {
+          console.log(res)
+          ID = res['ticket.requester'].id
+        })
+        .then(() => window.client.request({
+          url: '/api/custom_resources/relationships',
+          type: 'POST',
+          dataType: 'json',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            data: {
+              relationship_type: this.state.selectedResourceType + '_has_many_' + this.props.type + 's',
+              source: this.state.selectedResourceID,
+              target: 'zen:user:' + ID
+            }
+          })
+        }))
+        .then((res) => {
+          this.props.onSuccess()
+        })
+        .catch((err) => {
+          this.setState({
+            errors: err.responseJSON.errors
+          })
+        })
+    }
+
   }
 
   handleCancel() {
