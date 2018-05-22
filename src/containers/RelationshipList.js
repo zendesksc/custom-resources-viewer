@@ -9,41 +9,74 @@ class RelationshipList extends Component {
     super(props)
 
     this.state = {
+      currentID: 0,
       relationshipTypes: [],
-      relationships: []
+      relationships: [],
+      resources: {
+        products: []
+      }
     }
-    console.log(this.props.type)
   }
 
   componentDidMount() {
-    let relationshipTypes = []
+    let ticketID = 0
+    let products = []
 
-    // Get all relationship types
-    window.client.request('/api/custom_resources/relationship_types')
-      .then((res) => {
-        // We want to get a list of relationship types that match the current tabs type.
-        // we filter each relationshipType so that we only return targets that match the type.
-        relationshipTypes = res.data.filter((relationshipType) => {
-          if (relationshipType.target[0] === 'zen:' + this.props.type) {
-            return relationshipType
-          }
-          return null
-        })
-      })
+    // Get the current ticket ID
+    window.client.get('ticket.id')
+      .then((res) => ticketID = res['ticket.id'])
       .then(() => {
+        // Fetch all resources of type product
+        // https://z3n3310.zendesk.com/api/custom_resources/resources?type=product
+        return window.client.request('/api/custom_resources/resources?type=product')
+      })
+      .then((res) => {
+        products = res.data
+        // For each product, check to see if it has any tickets
+        // https://z3n3310.zendesk.com/api/custom_resources/resources/9fbad890-5cd2-11e8-b476-b7812961e0d3/related/product_has_many_tickets
+
+        products.map((product) => {
+          product.tickets = []
+
+          return window.client.request(`https://z3n3310.zendesk.com/api/custom_resources/resources/${product.id}/related/product_has_many_tickets`)
+            .then((res) => {
+              // For each related ticket, see if the ID "zen:ticket:890" matches the current ticket ID.
+              // If it matches, add the product to an array of valid products.
+              // console.log(products)
+              res.data.forEach((related) => {
+                if (related.id === `zen:ticket:${ticketID}`) {
+                  product.tickets.push(related)
+                }
+              })
+            })
+        })
+
+        return products
+      })
+      .then((res) => {
         this.setState({
-          relationshipTypes
+          resources: {
+            products: res
+          }
         })
       })
+      .catch((err) => {
+        // console.log(err)
+      })
+
   }
 
   render() {
-    console.log(this.state)
+
+    let productList = this.state.resources.products.map((product) => {
+      return <li key={product.id}>{product.attributes.name}</li>
+    })
+
     return (
       <div>
-        <div>
-          <p>List resources for {this.props.type}</p>
-        </div>
+        <ul>
+          {productList}
+        </ul>
         <div>
           <Button type='default'>
             <Icon type="plus" /> Attach a resource

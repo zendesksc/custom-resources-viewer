@@ -76,7 +76,6 @@ class FormContainer extends Component {
       // TODO: Make this dynamic for ticket / user / organization
       window.client.get('ticket.id')
         .then((res) => {
-          console.log(res)
           ID = res['ticket.id']
         })
         .then(() => window.client.request({
@@ -108,7 +107,6 @@ class FormContainer extends Component {
       // TODO: Make this dynamic for ticket / user / organization
       window.client.get('ticket.requester')
         .then((res) => {
-          console.log(res)
           ID = res['ticket.requester'].id
         })
         .then(() => window.client.request({
