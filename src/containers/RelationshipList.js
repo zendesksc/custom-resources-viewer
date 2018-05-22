@@ -15,63 +15,90 @@ class RelationshipList extends Component {
       relationshipTypes: [],
       relationships: [],
       resources: {
-        products: []
+        product: [],
+        event: []
       }
     }
   }
 
   componentDidMount() {
     let ticketID = 0
-    let products = []
+    let resources = {}
 
     // Get the current ticket ID
     window.client.get('ticket.id')
       .then((res) => ticketID = res['ticket.id'])
       .then(() => {
-        // Fetch all resources of type product
-        // https://z3n3310.zendesk.com/api/custom_resources/resources?type=product
-        return window.client.request('/api/custom_resources/resources?type=product')
+        // Fetch all resource types
+        // https://z3n3310.zendesk.com/api/custom_resources/resource_types
+        return window.client.request('/api/custom_resources/resource_types')
       })
       .then((res) => {
-        products = res.data
-        // For each product, check to see if it has any tickets
-        // https://z3n3310.zendesk.com/api/custom_resources/resources/9fbad890-5cd2-11e8-b476-b7812961e0d3/related/product_has_many_tickets
+        let resourceTypes = res.data
+        // Fetch all resources of each resource type
+        // https://z3n3310.zendesk.com/api/custom_resources/resources?type=product
+        return Promise.all(
+          resourceTypes.map((resourceType) => {
+            return window.client.request(`/api/custom_resources/resources?type=${resourceType.key}`)
+          })
+        )
+      })
+      .then((resourceType) => {
+        // This is where we will create the resources object that
+        // eventually will be set to the state
+        let resources = {}
 
-        products.map((product) => {
-          product.tickets = []
+        resourceType.forEach((item) => {
+          let type = item.data[0].type
+          let currentType = []
 
-          return window.client.request(`https://z3n3310.zendesk.com/api/custom_resources/resources/${product.id}/related/product_has_many_tickets`)
+          item.data.forEach((resource) => {
+            currentType.push(resource)
+          })
+
+          resources[type] = currentType
+        })
+
+        resources.product.map((item) => {
+          return window.client.request(`https://z3n3310.zendesk.com/api/custom_resources/resources/${item.id}/related/${item.type}_has_many_tickets`)
             .then((res) => {
-              // For each related ticket, see if the ID "zen:ticket:890" matches the current ticket ID.
-              // If it matches, add the product to an array of valid products.
-              // console.log(products)
               res.data.forEach((related) => {
+                // If the current ticket is related to the current resource
+                // mark the current resource as valid.
+                // Valid means it is the right resource for this ticket.
                 if (related.id === `zen:ticket:${ticketID}`) {
-                  product.tickets.push(related)
+                  item.isValid = true
+                } else {
+                  item.isValid = false
                 }
+              })
+              // I'm not sure this is the best way to do this... but it seems to work,
+              // We're setting the state of the component inside a nested promise.
+              this.setState({
+                resources: resources
               })
             })
         })
 
-        return products
+        return resources
       })
       .then((res) => {
         this.setState({
-          resources: {
-            products: res
-          }
+          resources: res
         })
       })
       .catch((err) => {
-        // console.log(err)
+        console.log(err)
       })
 
   }
 
   render() {
 
-    let productList = this.state.resources.products.map((product) => {
-      return <li key={product.id}>{product.attributes.name}</li>
+    let productList = this.state.resources.product.map((product) => {
+      if (product.isValid) {
+        return <li key={product.id}>{product.attributes.name}</li>
+      }
     })
 
     return (
@@ -84,7 +111,7 @@ class RelationshipList extends Component {
             <Icon type="plus" /> Attach a resource
           </Button>
         </div>
-      </div>
+      </div >
     )
   }
 }
