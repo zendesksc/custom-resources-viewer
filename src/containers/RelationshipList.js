@@ -3,7 +3,8 @@
 import React, { Component } from 'react'
 import {
   Button,
-  Icon
+  Icon,
+  Spin
 } from 'antd';
 
 class RelationshipList extends Component {
@@ -11,6 +12,7 @@ class RelationshipList extends Component {
     super(props)
 
     this.state = {
+      isLoading: false,
       currentID: 0,
       relationshipTypes: [],
       relationships: [],
@@ -22,6 +24,10 @@ class RelationshipList extends Component {
   }
 
   componentDidMount() {
+    this.setState({
+      isLoading: true
+    })
+
     let ticketID = 0
     let resources = {}
 
@@ -75,6 +81,7 @@ class RelationshipList extends Component {
               // I'm not sure this is the best way to do this... but it seems to work,
               // We're setting the state of the component inside a nested promise.
               this.setState({
+                isLoading: false,
                 resources: resources
               })
             })
@@ -84,6 +91,7 @@ class RelationshipList extends Component {
       })
       .then((res) => {
         this.setState({
+          isLoading: false,
           resources: res
         })
       })
@@ -100,6 +108,12 @@ class RelationshipList extends Component {
         return <li key={product.id}>{product.attributes.name}</li>
       }
     })
+
+    if (this.state.isLoading) {
+      return (
+        <Spin />
+      )
+    }
 
     return (
       <div>
