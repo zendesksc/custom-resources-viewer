@@ -17,6 +17,7 @@ class ContentContainer extends Component {
 
     this.handleFormSuccess = this.handleFormSuccess.bind(this)
     this.handleFormCancel = this.handleFormCancel.bind(this)
+    this.handleOnAttachResource = this.handleOnAttachResource.bind(this)
   }
 
   handleFormSuccess() {
@@ -31,12 +32,19 @@ class ContentContainer extends Component {
     })
   }
 
+  handleOnAttachResource() {
+    this.setState({
+      mode: MODES.FORM
+    })
+  }
+
   render() {
     if (this.state.mode === MODES.LIST) {
       return (
         <div>
           <RelationshipList
             type={this.props.type}
+            onAttachResourceButton={this.handleOnAttachResource}
           />
         </div>
       )

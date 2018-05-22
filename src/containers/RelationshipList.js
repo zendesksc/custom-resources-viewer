@@ -121,7 +121,7 @@ class RelationshipList extends Component {
           {productList}
         </ul>
         <div>
-          <Button type='default'>
+          <Button type='default' onClick={this.props.onAttachResourceButton}>
             <Icon type="plus" /> Attach a resource
           </Button>
         </div>
