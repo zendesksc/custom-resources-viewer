@@ -66,7 +66,7 @@ class RelationshipList extends Component {
         })
 
         resources.product.map((item) => {
-          return window.client.request(`https://z3n3310.zendesk.com/api/custom_resources/resources/${item.id}/related/${item.type}_has_many_tickets`)
+          return window.client.request(`/api/custom_resources/resources/${item.id}/related/${item.type}_has_many_tickets`)
             .then((res) => {
               res.data.forEach((related) => {
                 // If the current ticket is related to the current resource
