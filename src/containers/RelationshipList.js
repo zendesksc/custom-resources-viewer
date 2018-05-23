@@ -4,7 +4,8 @@ import React, { Component } from 'react'
 import {
   Button,
   Icon,
-  Spin
+  Spin,
+  List
 } from 'antd';
 
 class RelationshipList extends Component {
@@ -16,10 +17,7 @@ class RelationshipList extends Component {
       currentID: 0,
       relationshipTypes: [],
       relationships: [],
-      resources: {
-        product: [],
-        event: []
-      }
+      resources: {}
     }
   }
 
@@ -65,27 +63,31 @@ class RelationshipList extends Component {
           resources[type] = currentType
         })
 
-        resources.product.map((item) => {
-          return window.client.request(`/api/custom_resources/resources/${item.id}/related/${item.type}_has_many_tickets`)
-            .then((res) => {
-              res.data.forEach((related) => {
-                // If the current ticket is related to the current resource
-                // mark the current resource as valid.
-                // Valid means it is the right resource for this ticket.
-                if (related.id === `zen:ticket:${ticketID}`) {
-                  item.isValid = true
-                } else {
-                  item.isValid = false
-                }
+        for (let prop in resources) {
+          // Resources is an object, so we need to loop over each prop
+          // in order to get the right resource
+          resources[prop].map((item) => {
+            return window.client.request(`/api/custom_resources/resources/${item.id}/related/${item.type}_has_many_tickets`)
+              .then((res) => {
+                res.data.forEach((related) => {
+                  // If the current ticket is related to the current resource
+                  // mark the current resource as valid.
+                  // Valid means it is the right resource for this ticket.
+                  if (related.id === `zen:ticket:${ticketID}`) {
+                    item.isValid = true
+                  } else {
+                    item.isValid = false
+                  }
+                })
+                // I'm not sure this is the best way to do this... but it seems to work,
+                // We're setting the state of the component inside a nested promise.
+                this.setState({
+                  isLoading: false,
+                  resources: resources
+                })
               })
-              // I'm not sure this is the best way to do this... but it seems to work,
-              // We're setting the state of the component inside a nested promise.
-              this.setState({
-                isLoading: false,
-                resources: resources
-              })
-            })
-        })
+          })
+        }
 
         return resources
       })
@@ -98,16 +100,61 @@ class RelationshipList extends Component {
       .catch((err) => {
         console.log(err)
       })
+  }
 
+  generateResourceListData() {
+    let resourceList = []
+    for (let prop in this.state.resources) {
+      // Create a current resource object to add to resourceList
+      let currentResource = {
+        title: '',
+        items: []
+      }
+      // In this loop, prop refers to the current resource type
+      let currentResourceType = this.state.resources[prop]
+      if (currentResourceType !== undefined) {
+        // Probably a bit lazy, but I'm grabbing the name of the resource type
+        // by taking the type of the first current resource
+        currentResource.title = currentResourceType[0].type
+        // Go through each resource on this type
+        currentResourceType.forEach((resource) => {
+          // Check if it's a valid resource i.e it belongs to the current ticket
+          if (resource.isValid) {
+            // Push the current name
+            // TODO: update this so it just picks the first attribute
+            currentResource.items.push(resource.attributes.name)
+          }
+        })
+      }
+      resourceList.push(currentResource)
+    }
+    return resourceList
+  }
+
+  renderResourceList() {
+    let data = this.generateResourceListData()
+    let domData = []
+
+    data.forEach((resource) => {
+      // Only do this for resources that actually belong to this ticket
+      // resource.items in this case is a list of strings
+      if (resource.items.length > 0) {
+        // Push a new list element to the dom array
+        domData.push(
+          <List
+            key={resource.title}
+            header={<div><strong>{resource.title}</strong></div>}
+            dataSource={resource.items}
+            renderItem={item => (<List.Item>{item}</List.Item>)}
+          />
+        )
+      }
+    })
+
+    return domData
   }
 
   render() {
-
-    let productList = this.state.resources.product.map((product) => {
-      if (product.isValid) {
-        return <li key={product.id}>{product.attributes.name}</li>
-      }
-    })
 
     if (this.state.isLoading) {
       return (
@@ -117,9 +164,7 @@ class RelationshipList extends Component {
 
     return (
       <div>
-        <ul>
-          {productList}
-        </ul>
+        {this.renderResourceList()}
         <div>
           <Button type='default' onClick={this.props.onAttachResourceButton}>
             <Icon type="plus" /> Attach a resource

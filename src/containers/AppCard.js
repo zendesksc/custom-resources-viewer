@@ -12,7 +12,7 @@ class AppCard extends Component {
   }
 
   handleTabChange(e) {
-    console.log(e)
+    // console.log(e)
   }
 
   render() {
