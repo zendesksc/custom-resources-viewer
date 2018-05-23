@@ -62,7 +62,26 @@ class RelationshipList extends Component {
         }
       })
       .then((res) => {
-        console.log('this comes after', resources)
+        // This bit is a bit tough, we need to loop through each resource,
+        // then each item in each resource, then each relationship in each resource.
+        // 
+        // We're looking to create a list of resources where the relationship for each resource matches
+        // the current ticket id, we need to include
+        for (let i = 0; i < resources.length; i++) {
+          for (let j = 0; j < resources[i].items.length; j++) {
+            let item = resources[i].items[j]
+            console.log(item.relationships)
+            if (item.relationships !== undefined) {
+              item.relationships.filter((relationship) => {
+                if (relationship.target === 'zen:ticket:890') {
+                  return relationship
+                }
+              })
+            }
+          }
+        }
+
+        // console.log(resources)
       })
       .catch((err) => console.log(err))
   }
