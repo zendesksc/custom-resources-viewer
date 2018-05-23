@@ -62,6 +62,7 @@ class RelationshipList extends Component {
         }
       })
       .then((res) => {
+        console.log(resources)
         // This bit is a bit tough, we need to loop through each resource,
         // then each item in each resource, then each relationship in each resource.
         // 
