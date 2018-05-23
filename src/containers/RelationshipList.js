@@ -22,6 +22,10 @@ class RelationshipList extends Component {
   }
 
   componentDidMount() {
+    this.fetchResources()
+  }
+
+  fetchResources() {
     this.setState({
       isLoading: true
     })
@@ -151,7 +155,7 @@ class RelationshipList extends Component {
             renderItem={item => (
               <List.Item>
                 {item.name}
-                <Button icon="delete" shape="circle" />
+                <Button icon="delete" shape="circle" onClick={this.handleDeleteRelationship.bind(this, item.id)} />
               </List.Item>
             )}
           />
