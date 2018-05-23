@@ -122,7 +122,10 @@ class RelationshipList extends Component {
           if (resource.isValid) {
             // Push the current name
             // TODO: update this so it just picks the first attribute
-            currentResource.items.push(resource.attributes.name)
+            currentResource.items.push({
+              id: resource.id,
+              name: resource.attributes.name
+            })
           }
         })
       }
@@ -145,7 +148,12 @@ class RelationshipList extends Component {
             key={resource.title}
             header={<div><strong>{resource.title}</strong></div>}
             dataSource={resource.items}
-            renderItem={item => (<List.Item>{item}</List.Item>)}
+            renderItem={item => (
+              <List.Item>
+                {item.name}
+                <Button icon="delete" shape="circle" />
+              </List.Item>
+            )}
           />
         )
       }
