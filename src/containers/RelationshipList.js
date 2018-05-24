@@ -5,7 +5,8 @@ import {
   Button,
   Icon,
   Spin,
-  List
+  List,
+  Divider
 } from 'antd';
 
 class RelationshipList extends Component {
@@ -165,14 +166,6 @@ class RelationshipList extends Component {
 
   render() {
 
-    let relationshipList = this.state.relationships.map((relationship) => (
-      <div key={relationship.id}>
-        <p>{relationship.resource.type}</p>
-        <p>{relationship.resource.attributes[Object.keys(relationship.resource.attributes)[0]]}</p>
-        <button onClick={this.handleDeleteRelationship.bind(this, relationship.id)}>Delete</button>
-      </div>
-    ))
-
     if (this.state.isLoading) {
       return (
         <Spin />
@@ -182,8 +175,20 @@ class RelationshipList extends Component {
     return (
       <div>
         <div>
-          {relationshipList}
+          <List
+            itemLayout="horizontal"
+            dataSource={this.state.relationships}
+            renderItem={relationship => (
+              <List.Item actions={[<a onClick={this.handleDeleteRelationship.bind(this, relationship.id)}>Delete</a>]}>
+                <List.Item.Meta
+                  title={relationship.resource.attributes[Object.keys(relationship.resource.attributes)[0]]}
+                  description={relationship.resource.type}
+                />
+              </List.Item>
+            )}
+          />
         </div>
+        <Divider />
         <div>
           <Button type='default' onClick={this.props.onAttachResourceButton}>
             <Icon type="plus" /> Attach a resource
