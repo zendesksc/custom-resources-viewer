@@ -85,9 +85,9 @@ class FormContainer extends Component {
           contentType: 'application/json',
           data: JSON.stringify({
             data: {
-              relationship_type: this.state.selectedResourceType + '_has_many_' + this.props.type + 's',
-              source: this.state.selectedResourceID,
-              target: 'zen:ticket:' + ID
+              relationship_type: this.props.type + 's' + '_' + this.state.selectedResourceType + 's',
+              source: 'zen:ticket:' + ID,
+              target: this.state.selectedResourceID
             }
           })
         }))
@@ -101,36 +101,7 @@ class FormContainer extends Component {
         })
     }
 
-    if (this.props.type === 'user') {
-      let ID = 0
-
-      // TODO: Make this dynamic for ticket / user / organization
-      window.client.get('ticket.requester')
-        .then((res) => {
-          ID = res['ticket.requester'].id
-        })
-        .then(() => window.client.request({
-          url: '/api/custom_resources/relationships',
-          type: 'POST',
-          dataType: 'json',
-          contentType: 'application/json',
-          data: JSON.stringify({
-            data: {
-              relationship_type: this.state.selectedResourceType + '_has_many_' + this.props.type + 's',
-              source: this.state.selectedResourceID,
-              target: 'zen:user:' + ID
-            }
-          })
-        }))
-        .then((res) => {
-          this.props.onSuccess()
-        })
-        .catch((err) => {
-          this.setState({
-            errors: err.responseJSON.errors
-          })
-        })
-    }
+    console.log(this.props.type, 'is not handled on submit yet.')
 
   }
 
