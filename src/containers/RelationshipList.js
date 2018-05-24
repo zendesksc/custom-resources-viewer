@@ -65,6 +65,10 @@ class RelationshipList extends Component {
   }
 
   componentDidMount() {
+    this.fetchResources()
+  }
+
+  fetchResources() {
     let ticketID = 0
     let relationshipTypes = []
     let relationships = []
@@ -126,7 +130,17 @@ class RelationshipList extends Component {
   }
 
   handleDeleteRelationship(id) {
-    console.log(id)
+    this.setState({
+      loading: true
+    })
+
+    window.client.request({
+      url: `/api/custom_resources/relationships/${id}`,
+      type: 'DELETE'
+    }).then(() => {
+      this.fetchResources()
+    })
+      .catch((err) => console.log(err))
   }
 
   render() {
