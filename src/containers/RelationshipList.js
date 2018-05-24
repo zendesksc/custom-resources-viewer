@@ -86,6 +86,7 @@ class RelationshipList extends Component {
         .catch((err) => console.log(err))
     }
 
+    // Hardcoding this for user for now, will make dynamic later
     if (this.props.type === 'user') {
       let id = 0
       let relationshipTypes = []

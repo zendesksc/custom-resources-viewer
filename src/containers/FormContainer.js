@@ -101,6 +101,8 @@ class FormContainer extends Component {
         })
     }
 
+    // Hardcoding this for user at the moment, just to get it to work
+    // will look at making this function dynamic later.
     if (this.props.type === 'user') {
       let ID = 0
 
