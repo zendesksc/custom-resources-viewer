@@ -12,7 +12,7 @@ class ContentContainer extends Component {
     super(props)
 
     this.state = {
-      mode: MODES.LIST,
+      mode: MODES.FORM,
     }
 
     this.handleFormSuccess = this.handleFormSuccess.bind(this)
