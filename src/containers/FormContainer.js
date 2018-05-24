@@ -101,7 +101,35 @@ class FormContainer extends Component {
         })
     }
 
-    console.log(this.props.type, 'is not handled on submit yet.')
+    if (this.props.type === 'user') {
+      let ID = 0
+
+      window.client.get('ticket.requester')
+        .then((res) => {
+          ID = res['ticket.requester'].id
+        })
+        .then(() => window.client.request({
+          url: '/api/custom_resources/relationships',
+          type: 'POST',
+          dataType: 'json',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            data: {
+              relationship_type: this.props.type + 's' + '_' + this.state.selectedResourceType + 's',
+              source: 'zen:user:' + ID,
+              target: this.state.selectedResourceID
+            }
+          })
+        }))
+        .then((res) => {
+          this.props.onSuccess()
+        })
+        .catch((err) => {
+          this.setState({
+            errors: err.responseJSON.errors
+          })
+        })
+    }
 
   }
 
