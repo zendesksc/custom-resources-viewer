@@ -1,2 +1,2 @@
 # Delete a relationship
-curl -X "DELETE" -u agray@zendesk.com/token:bKOji3Qd20nGxopsXd7DNG5asiBVWGiSwhJB1bZJ https://z3n3310.zendesk.com/api/custom_resources/relationships/db7e941b-5ce2-11e8-b476-61f8a0f283d5
+curl -X "DELETE" -u agray@zendesk.com/token:bKOji3Qd20nGxopsXd7DNG5asiBVWGiSwhJB1bZJ https://z3n3310.zendesk.com/api/custom_resources/relationships/9f8e7e2a-5ce2-11e8-b476-ebce98c4d001
