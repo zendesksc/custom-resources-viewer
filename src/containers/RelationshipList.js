@@ -182,14 +182,20 @@ class RelationshipList extends Component {
           <List
             itemLayout="horizontal"
             dataSource={this.state.relationships}
-            renderItem={relationship => (
-              <List.Item actions={[<a onClick={this.handleDeleteRelationship.bind(this, relationship.id)}>Delete</a>]}>
-                <List.Item.Meta
-                  title={relationship.resource.attributes[Object.keys(relationship.resource.attributes)[0]]}
-                  description={relationship.resource.type}
-                />
-              </List.Item>
-            )}
+            renderItem={relationship => {
+              let description = []
+              for (let key in relationship.resource.attributes) {
+                description.push(<span>{key}: {relationship.resource.attributes[key]}<br /></span>)
+              }
+              return (
+                <List.Item actions={[<a onClick={this.handleDeleteRelationship.bind(this, relationship.id)}>Delete</a>]}>
+                  <List.Item.Meta
+                    title={relationship.resource.attributes[Object.keys(relationship.resource.attributes)[0]]}
+                    description={<p>{description}</p>}
+                  />
+                </List.Item>
+              )
+            }}
           />
         </div>
         <Divider />
